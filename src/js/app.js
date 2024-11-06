@@ -1,3 +1,4 @@
+import { name } from "file-loader";
 import "../style/index.css";
 
 /**
@@ -28,19 +29,56 @@ function render(variables = {}) {
   // if includeCover==false then we reset the cover code without the <img> tag to make the cover transparent.
   let cover = `<div class="cover"><img src="${variables.background}" /></div>`;
   if (variables.includeCover == false) cover = "<div class='cover'></div>";
+  // se añade condicional para que en caso de que variables.name o variables.lastName sean null no se muestren
+  let nameAndLastName = `<h1>${variables.name} ${variables.lastName}</h1>`;
+  variables.name == null && variables.lastName == null
+    ? (nameAndLastName = `<h1>Name last name</h1>`)
+    : variables.name == null && variables.lastName != null
+    ? (nameAndLastName = `<h1>Name ${variables.lastName}</h1>`)
+    : variables.name != null && variables.lastName == null
+    ? (nameAndLastName = `<h1>${variables.name} last name</h1>`)
+    : nameAndLastName;
+  // se añade condicional para que si el valor de variables.role es null no se muestre
+  let role = `<h2>${variables.role}</h2>`;
+  if (variables.role == null) role = `<h2>Role</h2>`;
+  // se añade condicional para que si el valor de variables.city o variables.country es null no se muestre
+  let cityAndCountry = `<h3>${variables.city}, ${variables.country}</h3>`;
+  variables.city == null && variables.country == null
+    ? (cityAndCountry = `<h3>City, Country</h3>`)
+    : variables.city != null && variables.country == null
+    ? (cityAndCountry = `<h3>${variables.city}, Country</h3>`)
+    : variables.city == null && variables.country != null
+    ? (cityAndCountry = `<h3>City, ${variables.country}</h3>`)
+    : cityAndCountry;
+
+  //se añade condicional para que si variables.twitter tiene valor null no se muestre
+  let twitter = `<li><a href="${variables.twitter}"><i class="fab fa-twitter"></i></a></li>`;
+  if (variables.twitter == null) twitter = "";
+
+  // se añade condicional para que si variables.github tiene valor null no se muestre
+  let github = `<li><a href="${variables.github}"><i class="fab fa-github"></i></a></li>`;
+  if (variables.github == null) github = "";
+
+  // se añade condicional para que si variables.linkedin tiene valor null no se muestre
+  let linkedin = `<li><a href="${variables.linkedin}"><i class="fab fa-linkedin"></i></a></li>`;
+  if (variables.linkedin == null) linkedin = "";
+
+  // se añade condicional para que si varibles.instagram tiene valor null no se muestre
+  let instagram = `<li><a href="${variables.instagram}"><i class="fab fa-instagram"></i></a></li>`;
+  if (variables.instagram == null) instagram = "";
 
   // reset the website body with the new html output
   document.querySelector("#widget_content").innerHTML = `<div class="widget">
             ${cover}
           <img src="${variables.avatarURL}" class="photo" />
-          <h1>${variables.name} ${variables.lastName}</h1>
-          <h2>${variables.role}</h2>
-          <h3>${variables.city}, ${variables.country}</h3>
+          ${nameAndLastName}
+          ${role}
+          ${cityAndCountry}
           <ul class="${variables.socialMediaPosition}">
-            <li><a href="${variables.twitter}"><i class="fab fa-twitter"></i></a></li>
-            <li><a href="${variables.github}"><i class="fab fa-github"></i></a></li>
-            <li><a href="${variables.linkedin}"><i class="fab fa-linkedin"></i></a></li>
-            <li><a href="${variables.instagram}"><i class="fab fa-instagram"></i></a></li>
+            ${twitter}
+            ${github}
+            ${linkedin}
+            ${instagram}
           </ul>
         </div>
     `;
@@ -78,7 +116,7 @@ window.onload = function() {
       const attribute = e.target.getAttribute("for"); // when any input changes, collect the value
       let values = {};
       values[attribute] =
-        this.value == "" || this.value == "null"
+        this.value == "" || this.value == null
           ? null
           : this.value == "true"
           ? true
